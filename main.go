@@ -12,9 +12,9 @@ import (
 type status int
 
 const (
-	todo status = iota
-	inProgress
-	done
+	about status = iota
+	projects
+	hobbies
 )
 
 var models []tea.Model
@@ -59,9 +59,9 @@ func (m *Model) initList(width, height int) {
 	m.list = list.New([]list.Item{}, list.NewDefaultDelegate(), width, height)
 	m.list.Title = "To do"
 	m.list.SetItems([]list.Item{
-		Task{status: todo, title: "About", description: "SOmething about myself"},
-		Task{status: todo, title: "Projects", description: "What Ive been tinkering on"},
-		Task{status: todo, title: "Hobbies", description: "What I like to do"},
+		Task{status: about, title: "About", description: "SOmething about myself"},
+		Task{status: projects, title: "Projects", description: "What Ive been tinkering on"},
+		Task{status: hobbies, title: "Hobbies", description: "What I like to do"},
 	})
 }
 
@@ -78,6 +78,19 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "q", "ctrl+c":
 			return m, tea.Quit
 		case "enter":
+			status := m.list.SelectedItem().(Task).status
+			if status == about {
+				models[model] = m
+				return models[form].Update("This is something about me")
+			}
+			if status == projects {
+				models[model] = m
+				return models[form].Update("These are my projects")
+			}
+			if status == hobbies {
+				models[model] = m
+				return models[form].Update("These are my hobbies")
+			}
 			models[model] = m
 			return models[form].Update(nil)
 		}

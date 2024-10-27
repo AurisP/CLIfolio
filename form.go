@@ -16,7 +16,10 @@ var (
 			Padding(1, 1)
 )
 
-type Form struct{}
+type Form struct {
+	title       string
+	description string
+}
 
 func NewForm() *Form {
 	return &Form{}
@@ -28,6 +31,8 @@ func (m Form) Init() tea.Cmd {
 
 func (m Form) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
+	case string:
+		m.title = msg
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "ctrl+c", "q":
@@ -38,9 +43,5 @@ func (m Form) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m Form) View() string {
-
-	title := "About myself"
-	body := "Something about myself"
-
-	return titleStyle.Render(title) + "\n\n" + bodyStyle.Render(body)
+	return titleStyle.Render(m.title) + "\n\n" + bodyStyle.Render(m.description)
 }
