@@ -5,8 +5,6 @@ import (
 	"os"
 
 	"github.com/charmbracelet/bubbles/list"
-	"github.com/charmbracelet/bubbles/textarea"
-	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 )
@@ -37,18 +35,18 @@ type Task struct {
 	description string
 }
 
+// Task interface methods
 func (t Task) FilterValue() string {
 	return t.title
 }
-
 func (t Task) Title() string {
 	return t.title
 }
-
 func (t Task) Description() string {
 	return t.description
 }
 
+// Main list model struct
 type Model struct {
 	list list.Model
 }
@@ -83,7 +81,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			models[model] = m
 			return models[form].Update(nil)
 		}
-
 	}
 	var cmd tea.Cmd
 	m.list, cmd = m.list.Update(msg)
@@ -92,54 +89,6 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m Model) View() string {
 	return mainStyle.Render(m.list.View())
-}
-
-type Form struct {
-	title       textinput.Model
-	description textarea.Model
-}
-
-func NewForm() *Form {
-	form := &Form{}
-	form.title = textinput.New()
-	form.description = textarea.New()
-	form.title.Focus()
-	return form
-}
-
-func (m Form) Init() tea.Cmd {
-	return nil
-}
-
-func (m Form) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	var cmd tea.Cmd
-	switch msg := msg.(type) {
-	case tea.KeyMsg:
-		switch msg.String() {
-		case "ctrl+c", "q":
-			return m, tea.Quit
-		case "enter":
-			if m.title.Focused() {
-				m.title.Blur()
-				m.description.Focus()
-				return m, textarea.Blink
-			} else {
-				models[form] = m
-				return models[model].Update(nil)
-			}
-		}
-	}
-	if m.title.Focused() {
-		m.title, cmd = m.title.Update(msg)
-		return m, cmd
-	} else {
-		m.description, cmd = m.description.Update(msg)
-		return m, cmd
-	}
-}
-
-func (m Form) View() string {
-	return "nothing"
 }
 
 func main() {
