@@ -22,7 +22,8 @@ func (m loadingModel) Init() tea.Cmd {
 func (m loadingModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
-		return m, tea.Quit
+		cmd := m.progress.IncrPercent(1)
+		return m, tea.Batch(tickCmd(), cmd)
 
 	case tea.WindowSizeMsg:
 		m.progress.Width = msg.Width - padding*2 - 4
@@ -56,7 +57,7 @@ func (m loadingModel) View() string {
 	return "\n" +
 		pad + "Loading terminal...\n\n" + // Loading text added here
 		pad + m.progress.View() + "\n\n" +
-		pad + helpStyle("Press any key to quit")
+		pad + helpStyle("Press any key to skip")
 }
 
 func tickCmd() tea.Cmd {
