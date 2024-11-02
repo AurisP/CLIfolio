@@ -1,6 +1,7 @@
 package main
 
 import (
+	"math/rand"
 	"strings"
 	"time"
 
@@ -35,7 +36,8 @@ func (m loadingModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			// Transition to the terminal model when loading is complete
 			return NewModel(), nil
 		}
-		cmd := m.progress.IncrPercent(0.25)
+		// Seed the random number generator
+		cmd := m.progress.IncrPercent(0.1 + rand.Float64()*(0.8-0.1))
 		return m, tea.Batch(tickCmd(), cmd)
 
 	// Handle progress frame updates
