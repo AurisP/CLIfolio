@@ -19,6 +19,8 @@ type model struct {
 
 type revealMsg struct{}
 
+var username string = "adventurer@pc"
+
 func NewModel() *model {
 	ti := textinput.New()
 	ti.Placeholder = "Type a command..."
@@ -31,7 +33,7 @@ func NewModel() *model {
 		outputHistory:         []string{"Welcome to the CLI! Type 'help' to see available commands."},
 		displayedHistoryCount: 1, // Show the first line
 		revealPosition:        0, // Start reveal from the first character
-		typingDelay:           5 * time.Millisecond,
+		typingDelay:           2 * time.Millisecond,
 	}
 }
 
@@ -49,7 +51,7 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "enter":
 			command := strings.TrimSpace(m.input.Value())
 			if command != "" {
-				m.outputHistory = append(m.outputHistory, "user> "+command)
+				m.outputHistory = append(m.outputHistory, username+command)
 				response := m.handleCommand(command)
 				m.outputHistory = append(m.outputHistory, response)
 				m.input.SetValue("")
@@ -99,6 +101,15 @@ func (m *model) handleCommand(command string) string {
 	}
 }
 
+func renderEntry(entry string) string {
+	if strings.HasPrefix(entry, username) {
+		prefix := userStyle.Render(username)
+		userInput := textStyle.Render(entry[len(username):]) // Render the user input separately
+		return prefix + textStyle.Render("> ") + userInput
+	}
+	return textStyle.Render(entry)
+}
+
 func (m model) View() string {
 	var renderedHistory []string
 	visibleCount := m.displayedHistoryCount
@@ -109,17 +120,19 @@ func (m model) View() string {
 		}
 
 		if i == visibleCount-1 && m.revealPosition < len(entry) {
-			renderedHistory = append(renderedHistory, outputStyle.Render(entry[:m.revealPosition]))
+			// Render the partially revealed entry with a style
+			renderedHistory = append(renderedHistory, textStyle.Render(entry[:m.revealPosition]))
 		} else {
-			if strings.HasPrefix(entry, "user> ") {
-				renderedHistory = append(renderedHistory, inputHistoryStyle.Render(entry))
-			} else {
-				renderedHistory = append(renderedHistory, outputStyle.Render(entry))
-			}
+			// Use the helper function to render the entry
+			renderedHistory = append(renderedHistory, renderEntry(entry))
 		}
 	}
 
+	// Join the rendered history and create the input view
 	history := strings.Join(renderedHistory, "\n")
-	inputView := inputStyle.Render("user" + m.input.View())
+	prefix := userStyle.Render(username)
+	userInput := textStyle.Render(m.input.View())
+	inputView := prefix + userInput
+
 	return borderStyle.Render(history + "\n" + inputView)
 }
