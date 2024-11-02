@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"os"
 
 	"github.com/charmbracelet/bubbles/list"
@@ -25,9 +26,37 @@ const (
 )
 
 var (
-	mainStyle = lipgloss.NewStyle().
-		Foreground(lipgloss.Color("241"))
+	itemStyle         = lipgloss.NewStyle().PaddingLeft(4)
+	selectedItemStyle = lipgloss.NewStyle().PaddingLeft(2).Foreground(lipgloss.Color("170"))
+	paginationStyle   = list.DefaultStyles().PaginationStyle.PaddingLeft(4)
+	helpStyle         = list.DefaultStyles().HelpStyle.PaddingLeft(4).PaddingBottom(1)
 )
+
+type itemDelegate struct{}
+
+func (d itemDelegate) Height() int                             { return 1 }
+func (d itemDelegate) Spacing() int                            { return 0 }
+func (d itemDelegate) Update(_ tea.Msg, _ *list.Model) tea.Cmd { return nil }
+func (d itemDelegate) Render(w io.Writer, m list.Model, index int, listItem list.Item) {
+	// Assert that listItem is of type item or Task
+	i, ok := listItem.(Task)
+	if !ok {
+		return
+	}
+
+	// Format the item as a string
+	var str string
+	if index == m.Index() {
+		// Selected item style
+		str = selectedItemStyle.Render(fmt.Sprintf("> %s", i.Title()))
+	} else {
+		// Regular item style
+		str = itemStyle.Render(fmt.Sprintf("%d. %s", index+1, i.Title()))
+	}
+
+	// Output the styled item string
+	fmt.Fprint(w, str)
+}
 
 type Task struct {
 	status      status
@@ -56,10 +85,16 @@ func New() *Model {
 }
 
 func (m *Model) initList(width, height int) {
-	m.list = list.New([]list.Item{}, list.NewDefaultDelegate(), width, height)
+	m.list = list.New([]list.Item{}, itemDelegate{}, width, height)
+	m.list.Styles.Title = titleStyle
+	m.list.Styles.PaginationStyle = paginationStyle
+	m.list.Styles.HelpStyle = helpStyle
+	m.list.SetShowStatusBar(false)
+	m.list.SetFilteringEnabled(false)
+
 	m.list.Title = "To do"
 	m.list.SetItems([]list.Item{
-		Task{status: about, title: "About", description: "SOmething about myself"},
+		Task{status: about, title: "About", description: "Something about myself"},
 		Task{status: projects, title: "Projects", description: "What Ive been tinkering on"},
 		Task{status: hobbies, title: "Hobbies", description: "What I like to do"},
 	})
@@ -101,13 +136,14 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m Model) View() string {
-	return mainStyle.Render(m.list.View())
+
+	return m.list.View()
 }
 
 func main() {
 	models = []tea.Model{New(), NewForm()}
 	m := models[model]
-	p := tea.NewProgram(m)
+	p := tea.NewProgram(m, tea.WithAltScreen())
 	if _, err := p.Run(); err != nil {
 		fmt.Println("Error running program:", err)
 		os.Exit(1)
