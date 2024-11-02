@@ -1,19 +1,19 @@
-// main.go
 package main
 
 import (
-	"fmt"
 	"os"
 
+	"github.com/charmbracelet/bubbles/progress"
 	tea "github.com/charmbracelet/bubbletea"
 )
 
 func main() {
-	// Initialize and run the Bubble Tea program
-	m := NewModel()
-	p := tea.NewProgram(m)
-	if err := p.Start(); err != nil {
-		fmt.Fprintf(os.Stderr, "Error starting program: %v", err)
+	// Start with progress bar model
+	m := loadingModel{
+		progress: progress.New(progress.WithDefaultGradient()),
+	}
+
+	if _, err := tea.NewProgram(m).Run(); err != nil {
 		os.Exit(1)
 	}
 }

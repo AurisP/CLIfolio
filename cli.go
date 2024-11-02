@@ -1,4 +1,3 @@
-// model.go
 package main
 
 import (
@@ -14,7 +13,6 @@ type model struct {
 	outputHistory []string
 }
 
-// NewModel initializes the model with default values and styles.
 func NewModel() model {
 	ti := textinput.New()
 	ti.Placeholder = "Type a command..."
@@ -22,7 +20,6 @@ func NewModel() model {
 	ti.CharLimit = 100
 	ti.Width = 30
 
-	// List of available commands
 	commandList := `
 Available commands:
   - help      Show available commands
@@ -40,12 +37,11 @@ Available commands:
 	}
 }
 
-// Init initializes the input blinking cursor.
+// CLI Update function
 func (m model) Init() tea.Cmd {
 	return textinput.Blink
 }
 
-// Update processes the key events and handles commands
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
@@ -69,7 +65,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, cmd
 }
 
-// handleCommand processes different commands and returns responses
+// CLI command handling
 func (m *model) handleCommand(command string) string {
 	switch command {
 	case "help":
@@ -90,16 +86,14 @@ func (m *model) handleCommand(command string) string {
 	}
 }
 
-// View renders the UI with separate styles for input and output history
+// CLI View function
 func (m model) View() string {
 	var renderedHistory []string
 
 	for _, entry := range m.outputHistory {
 		if strings.HasPrefix(entry, "> ") {
-			// Render input history in blue
 			renderedHistory = append(renderedHistory, inputHistoryStyle.Render(entry))
 		} else {
-			// Render output responses in gold
 			renderedHistory = append(renderedHistory, outputStyle.Render(entry))
 		}
 	}
