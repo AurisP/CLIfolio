@@ -14,7 +14,4 @@ var (
 	inputHistoryStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("#87CEEB"))            // Blue for input history
 	outputStyle       = lipgloss.NewStyle().Foreground(lipgloss.Color("#FFD700"))            // Gold for output history
 	borderStyle       = lipgloss.NewStyle().Border(lipgloss.RoundedBorder()).Padding(1)
-
-	// Progress bar styles
-	progressStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("#FFA500")) // Orange
 )
