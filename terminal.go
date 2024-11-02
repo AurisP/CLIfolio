@@ -27,14 +27,19 @@ func NewModel() *model {
 	ti.Width = 30
 
 	return &model{
-		input:         ti,
-		outputHistory: []string{"Welcome to the CLI! Type 'help' to see available commands."},
-		typingDelay:   5 * time.Millisecond,
+		input:                 ti,
+		outputHistory:         []string{"Welcome to the CLI! Type 'help' to see available commands."},
+		displayedHistoryCount: 1, // Show the first line
+		revealPosition:        0, // Start reveal from the first character
+		typingDelay:           5 * time.Millisecond,
 	}
 }
 
 func (m model) Init() tea.Cmd {
-	return textinput.Blink
+	// Start the reveal animation immediately on application load
+	return tea.Tick(m.typingDelay, func(t time.Time) tea.Msg {
+		return revealMsg{}
+	})
 }
 
 func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {

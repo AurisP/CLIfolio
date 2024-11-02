@@ -33,9 +33,10 @@ func (m loadingModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case tickMsg:
 		if m.progress.Percent() == 1.0 {
-			// Transition to the terminal model when loading is complete
-			return NewModel(), nil
+			newModel := NewModel()
+			return newModel, newModel.Init()
 		}
+
 		cmd := m.progress.IncrPercent(0.1 + rand.Float64()*(0.8-0.1))
 		return m, tea.Batch(tickCmd(), cmd)
 
