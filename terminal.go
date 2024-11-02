@@ -1,50 +1,43 @@
 package main
 
 import (
-	"strings"
-
 	"cli/commands"
+	"strings"
+	"time"
 
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 )
 
 type model struct {
-	input         textinput.Model
-	commandList   string
-	outputHistory []string
+	input                 textinput.Model
+	outputHistory         []string
+	displayedHistoryCount int
+	revealPosition        int // Tracks how many characters of the current line are revealed
+	typingDelay           time.Duration
 }
 
-func NewModel() model {
+type revealMsg struct{}
+
+func NewModel() *model {
 	ti := textinput.New()
 	ti.Placeholder = "Type a command..."
 	ti.Focus()
 	ti.CharLimit = 100
 	ti.Width = 30
 
-	commandList := `
-Available commands:
-  - help      Show available commands
-  - about     Display information about me
-  - projects  List my projects
-  - hobbies   Describe my hobbies
-  - clear     Clear the screen
-  - exit      Exit the application
-`
-
-	return model{
+	return &model{
 		input:         ti,
-		commandList:   commandList,
 		outputHistory: []string{"Welcome to the CLI! Type 'help' to see available commands."},
+		typingDelay:   5 * time.Millisecond,
 	}
 }
 
-// CLI Update function
 func (m model) Init() tea.Cmd {
 	return textinput.Blink
 }
 
-func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
@@ -54,11 +47,27 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.outputHistory = append(m.outputHistory, "user> "+command)
 				response := m.handleCommand(command)
 				m.outputHistory = append(m.outputHistory, response)
-				m.input.SetValue("") // Clear the input field
+				m.input.SetValue("")
+
+				// Reset for new output animation
+				m.displayedHistoryCount = len(m.outputHistory)
+				m.revealPosition = 0
+				return m, tea.Tick(m.typingDelay, func(t time.Time) tea.Msg {
+					return revealMsg{}
+				})
 			}
 
 		case "ctrl+c", "q":
 			return m, tea.Quit
+		}
+
+	case revealMsg:
+		// Increment reveal position and continue until line is fully displayed
+		if m.revealPosition < len(m.outputHistory[m.displayedHistoryCount-1]) {
+			m.revealPosition++
+			return m, tea.Tick(m.typingDelay, func(t time.Time) tea.Msg {
+				return revealMsg{}
+			})
 		}
 	}
 
@@ -73,6 +82,8 @@ func (m *model) handleCommand(command string) string {
 		return commands.Help()
 	case "about":
 		return commands.About()
+	case "career":
+		return commands.Career()
 	case "clear":
 		m.outputHistory = nil
 		return ""
@@ -83,21 +94,27 @@ func (m *model) handleCommand(command string) string {
 	}
 }
 
-// ... [rest of your code]
-
-// CLI View function
 func (m model) View() string {
 	var renderedHistory []string
+	visibleCount := m.displayedHistoryCount
 
-	for _, entry := range m.outputHistory {
-		if strings.HasPrefix(entry, "user> ") {
-			renderedHistory = append(renderedHistory, inputHistoryStyle.Render(entry))
+	for i, entry := range m.outputHistory {
+		if i >= visibleCount {
+			break
+		}
+
+		if i == visibleCount-1 && m.revealPosition < len(entry) {
+			renderedHistory = append(renderedHistory, outputStyle.Render(entry[:m.revealPosition]))
 		} else {
-			renderedHistory = append(renderedHistory, outputStyle.Render(entry))
+			if strings.HasPrefix(entry, "user> ") {
+				renderedHistory = append(renderedHistory, inputHistoryStyle.Render(entry))
+			} else {
+				renderedHistory = append(renderedHistory, outputStyle.Render(entry))
+			}
 		}
 	}
 
 	history := strings.Join(renderedHistory, "\n")
 	inputView := inputStyle.Render("user" + m.input.View())
-	return borderStyle.Render(history + "\n\n" + inputView)
+	return borderStyle.Render(history + "\n" + inputView)
 }

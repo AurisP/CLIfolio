@@ -13,7 +13,7 @@ func main() {
 		progress: progress.New(progress.WithScaledGradient("#f0f2f2", "#08b9ff")),
 	}
 
-	if _, err := tea.NewProgram(m).Run(); err != nil {
+	if _, err := tea.NewProgram(m, tea.WithAltScreen()).Run(); err != nil {
 		os.Exit(1)
 	}
 }

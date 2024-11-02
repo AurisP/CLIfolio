@@ -4,7 +4,7 @@ func Help() string {
 	return `Available commands:
   - help      Show available commands
   - about     Display information about me
-  - projects  List my projects
+  - career    Describe my career
   - hobbies   Describe my hobbies
   - clear     Clear the screen
   - exit      Exit the application`
