@@ -10,7 +10,7 @@ import (
 func main() {
 	// Start with progress bar model
 	m := loadingModel{
-		progress: progress.New(progress.WithScaledGradient("#FF7CCB", "#FDFF8C")),
+		progress: progress.New(progress.WithScaledGradient("#f0f2f2", "#08b9ff")),
 	}
 
 	if _, err := tea.NewProgram(m).Run(); err != nil {

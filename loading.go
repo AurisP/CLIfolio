@@ -22,7 +22,7 @@ func (m loadingModel) Init() tea.Cmd {
 func (m loadingModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
-		return m, tea.Quit // Allow quitting with a key press
+		return m, tea.Quit
 
 	case tea.WindowSizeMsg:
 		m.progress.Width = msg.Width - padding*2 - 4
@@ -36,7 +36,6 @@ func (m loadingModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			// Transition to the terminal model when loading is complete
 			return NewModel(), nil
 		}
-		// Seed the random number generator
 		cmd := m.progress.IncrPercent(0.1 + rand.Float64()*(0.8-0.1))
 		return m, tea.Batch(tickCmd(), cmd)
 
@@ -54,8 +53,9 @@ func (m loadingModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m loadingModel) View() string {
 	pad := strings.Repeat(" ", padding)
 	return "\n" +
+		pad + "Loading terminal...\n\n" + // Loading text added here
 		pad + m.progress.View() + "\n\n" +
-		pad + helpStyle("Loading... Please wait...")
+		pad + helpStyle("Press any key to quit")
 }
 
 func tickCmd() tea.Cmd {
