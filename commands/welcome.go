@@ -7,7 +7,7 @@ const welcomeText = `
  |_||_\___|\_, | ( ) |___| |_|_|_| /_/ \_\_,_|_| |_/__/
            |__/  |/ 
 
-Hello adventurer! Welcome to my CLI portfolio! Type 'help' to see the available commands.`
+Hello dear User! Welcome to my CLI portfolio! Type 'help' to see the available commands.`
 
 func Welcome() string {
 	return welcomeText

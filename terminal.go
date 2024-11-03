@@ -22,7 +22,7 @@ type model struct {
 
 type revealMsg struct{}
 
-var username string = "adventurer@pc"
+var username string = "Auris@pc"
 
 func NewModel() *model {
 	ti := textinput.New()
@@ -101,8 +101,8 @@ func (m *model) handleCommand(command string) string {
 		m.displaySlow = false
 		return renderMarkdown(commands.About())
 	case "career":
-		m.displaySlow = true
-		return commands.Career()
+		m.displaySlow = false
+		return renderMarkdown(commands.Career())
 	case "clear":
 		m.outputHistory = nil
 		return ""

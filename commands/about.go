@@ -1,24 +1,15 @@
 package commands
 
-const aboutText = `# 👋 Hey, I’m Auris!
+const aboutText = `
+# 👋 Hi, I’m Auris!
 
-I’m a **hardware and programming enthusiast** from Tallinn, Estonia, studying at **TalTech**. I love building stuff, especially if it involves **embedded systems** or creative tech solutions.
+I'm a **junior software developer** from **Tallinn, Estonia** 🌍. I graduated with a Bachelor's degree from TalTech University, and I'm currently working as a **junior software engineer**, focusing primarily on **embedded Linux systems** and coding in **C**, **Rust**, and **Java**—with a little bit of everything else mixed in!
 
-### 🚀 Experience Highlights
-- **Video Latency System** for Remote ATC (with Adacel & TalTech)
-- **Maze Algorithms** Project Lead @ TalTech  
-- **Electronics Assembler** @ VokBikes 
+## ⚙️  What I Do
+I’m passionate about **electronics** and have built projects ranging from **a powerful LED light** to ** an FPV drone** 🚁, along with many other interesting creations over the years.
 
-### 🛠 Skills & Projects
-- **Skills:** C/C++, Python, Linux, Network Programming  
-- **Projects:** RC Car, FPV Drone, 140W LED Flashlight 🔦, LIDAR Navigation  
-
-### 🌍 Languages & Hobbies
-- **Languages:** Estonian 🇪🇪, English 🇬🇧  
-- **Hobbies:** Triathlons, Backpacking, Investing
-
-Get in touch! [aurispraam@gmail.com](mailto:aurispraam@gmail.com)
-
+## 🏃‍♂️  Outside of Code
+When I'm not behind a screen, you can find me pushing my limits in **ultra-endurance sports**. I’ve completed a full-distance **triathlon** 🏊‍♂️ 🚴‍♂️ 🏃‍♂️ and several **ultramarathons**. I find it very rewarding to push my physical limits.
 `
 
 func About() string {
