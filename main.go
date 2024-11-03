@@ -1,15 +1,21 @@
 package main
 
 import (
+	"context"
 	"errors"
 	"net"
 	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"github.com/charmbracelet/bubbles/progress"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/log"
 	"github.com/charmbracelet/ssh"
 	"github.com/charmbracelet/wish"
+	"github.com/charmbracelet/wish/activeterm"
+	"github.com/charmbracelet/wish/bubbletea"
 	"github.com/charmbracelet/wish/logging"
 )
 
@@ -19,35 +25,48 @@ const (
 )
 
 func main() {
-	// Initialize progress bar model
-	m := loadingModel{
-		progress: progress.New(progress.WithScaledGradient("#f0f2f2", "#08b9ff")),
-	}
-
-	srv, err := wish.NewServer(
+	s, err := wish.NewServer(
 		wish.WithAddress(net.JoinHostPort(host, port)),
 		wish.WithHostKeyPath(".ssh/id_ed25519"),
 		wish.WithMiddleware(
-			func(next ssh.Handler) ssh.Handler {
-				return func(sess ssh.Session) {
-					if _, err := tea.NewProgram(m, tea.WithInput(sess), tea.WithOutput(sess)).Run(); err != nil {
-						wish.Println(sess, "Error starting the application: "+err.Error())
-					}
-					next(sess)
-				}
-			},
+			bubbletea.Middleware(teaHandler),
+			activeterm.Middleware(), // Required for Bubble Tea apps
 			logging.Middleware(),
 		),
 	)
-
 	if err != nil {
 		log.Error("Could not start server", "error", err)
 		os.Exit(1)
 	}
 
+	// Graceful shutdown handling
+	done := make(chan os.Signal, 1)
+	signal.Notify(done, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
 	log.Info("Starting SSH server", "host", host, "port", port)
-	if err = srv.ListenAndServe(); err != nil && !errors.Is(err, ssh.ErrServerClosed) {
-		log.Error("Could not start server", "error", err)
-		os.Exit(1)
+	go func() {
+		if err = s.ListenAndServe(); err != nil && !errors.Is(err, ssh.ErrServerClosed) {
+			log.Error("Could not start server", "error", err)
+			done <- nil
+		}
+	}()
+
+	<-done
+	log.Info("Stopping SSH server")
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+	if err := s.Shutdown(ctx); err != nil && !errors.Is(err, ssh.ErrServerClosed) {
+		log.Error("Could not stop server", "error", err)
 	}
+}
+
+// teaHandler creates a new Bubble Tea model for the SSH session.
+func teaHandler(sess ssh.Session) (tea.Model, []tea.ProgramOption) {
+	// Get the PTY information
+	// Initialize your loading model
+	m := loadingModel{
+		progress: progress.New(progress.WithScaledGradient("#f0f2f2", "#08b9ff")),
+	}
+
+	// Return the model and options for the program
+	return m, nil
 }
