@@ -1,27 +1,27 @@
 package commands
 
-import (
-	"log"
+const aboutText = `# 👋 Hey, I’m Auris!
 
-	"github.com/charmbracelet/glamour"
-)
+I’m a **hardware and programming enthusiast** from Tallinn, Estonia, studying at **TalTech**. I love building stuff, especially if it involves **embedded systems** or creative tech solutions.
 
-const aboutText = `# About
+### 🚀 Experience Highlights
+- **Video Latency System** for Remote ATC (with Adacel & TalTech)
+- **Maze Algorithms** Project Lead @ TalTech  
+- **Electronics Assembler** @ VokBikes 
 
-I'm a software developer with a passion for programming!
+### 🛠 Skills & Projects
+- **Skills:** C/C++, Python, Linux, Network Programming  
+- **Projects:** RC Car, FPV Drone, 140W LED Flashlight 🔦, LIDAR Navigation  
 
-## What I Love
-- Creating interactive command-line interfaces
-- Using Go for high-performance applications
-- Exploring new frameworks
+### 🌍 Languages & Hobbies
+- **Languages:** Estonian 🇪🇪, English 🇬🇧  
+- **Hobbies:** Triathlons, Backpacking, Investing
 
-For more information, check out my projects on [GitHub](https://github.com).`
+Get in touch! [aurispraam@gmail.com](mailto:aurispraam@gmail.com)
+
+`
 
 func About() string {
-	renderedText, err := glamour.Render(aboutText, "dark")
-	if err != nil {
-		log.Println("Error rendering with Glamour:", err)
-		return "Error displaying content."
-	}
-	return renderedText
+
+	return aboutText
 }

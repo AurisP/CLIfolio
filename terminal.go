@@ -2,11 +2,13 @@ package main
 
 import (
 	"cli/commands"
+	"log"
 	"strings"
 	"time"
 
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/glamour"
 )
 
 type model struct {
@@ -93,11 +95,11 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m *model) handleCommand(command string) string {
 	switch command {
 	case "help":
-		m.displaySlow = true
-		return commands.Help()
+		m.displaySlow = false
+		return renderMarkdown(commands.Help())
 	case "about":
 		m.displaySlow = false
-		return commands.About()
+		return renderMarkdown(commands.About())
 	case "career":
 		m.displaySlow = true
 		return commands.Career()
@@ -109,6 +111,15 @@ func (m *model) handleCommand(command string) string {
 	default:
 		return "Unknown command: " + command
 	}
+}
+
+func renderMarkdown(markdownText string) string {
+	renderedText, err := glamour.Render(markdownText, "dark")
+	if err != nil {
+		log.Println("Error rendering with Glamour:", err)
+		return "Error displaying content."
+	}
+	return renderedText
 }
 
 func renderEntry(entry string) string {

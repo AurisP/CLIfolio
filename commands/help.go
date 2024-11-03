@@ -1,11 +1,19 @@
 package commands
 
 func Help() string {
-	return `Available commands:
-  - help      Show available commands
-  - about     Display information about me
-  - career    Describe my career
-  - hobbies   Describe my hobbies
-  - clear     Clear the screen
-  - exit      Exit the application`
+	return `
+# 🛠 Available Commands
+- **help**:  
+  _Show available commands_
+- **about**:  
+  _Learn a bit about me!_
+- **career**:  
+  _Get a quick look at my work experience_
+- **hobbies**:  
+  _Check out what I do for fun!_
+- **clear**:  
+  _Clear the screen_
+- **exit**:  
+  _Exit the application_
+`
 }
