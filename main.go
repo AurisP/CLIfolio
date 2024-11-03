@@ -30,7 +30,7 @@ func main() {
 		wish.WithHostKeyPath(".ssh/id_ed25519"),
 		wish.WithMiddleware(
 			bubbletea.Middleware(teaHandler),
-			activeterm.Middleware(), // Required for Bubble Tea apps
+			activeterm.Middleware(),
 			logging.Middleware(),
 		),
 	)
@@ -61,12 +61,9 @@ func main() {
 
 // teaHandler creates a new Bubble Tea model for the SSH session.
 func teaHandler(sess ssh.Session) (tea.Model, []tea.ProgramOption) {
-	// Get the PTY information
 	// Initialize your loading model
 	m := loadingModel{
 		progress: progress.New(progress.WithScaledGradient("#f0f2f2", "#08b9ff")),
 	}
-
-	// Return the model and options for the program
 	return m, nil
 }

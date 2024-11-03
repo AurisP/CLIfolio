@@ -33,7 +33,7 @@ func NewModel() *model {
 
 	return &model{
 		input:                 ti,
-		outputHistory:         []string{"Welcome to the CLI! Type 'help' to see available commands."},
+		outputHistory:         []string{commands.Welcome()},
 		displayedHistoryCount: 1, // Show the first line
 		revealPosition:        0, // Start reveal from the first character
 		typingDelay:           2 * time.Millisecond,
@@ -119,7 +119,7 @@ func renderMarkdown(markdownText string) string {
 		log.Println("Error rendering with Glamour:", err)
 		return "Error displaying content."
 	}
-	return renderedText
+	return strings.TrimSpace(renderedText)
 }
 
 func renderEntry(entry string) string {
