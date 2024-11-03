@@ -15,6 +15,7 @@ type model struct {
 	displayedHistoryCount int
 	revealPosition        int // Tracks how many characters of the current line are revealed
 	typingDelay           time.Duration
+	displaySlow           bool
 }
 
 type revealMsg struct{}
@@ -59,9 +60,15 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				// Reset for new output animation
 				m.displayedHistoryCount = len(m.outputHistory)
 				m.revealPosition = 0
-				return m, tea.Tick(m.typingDelay, func(t time.Time) tea.Msg {
-					return revealMsg{}
-				})
+
+				if m.displaySlow {
+					return m, tea.Tick(m.typingDelay, func(t time.Time) tea.Msg {
+						return revealMsg{}
+					})
+				} else {
+					m.revealPosition = len(m.outputHistory[m.displayedHistoryCount-1])
+				}
+
 			}
 
 		case "ctrl+c", "q":
@@ -86,10 +93,13 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m *model) handleCommand(command string) string {
 	switch command {
 	case "help":
+		m.displaySlow = true
 		return commands.Help()
 	case "about":
+		m.displaySlow = false
 		return commands.About()
 	case "career":
+		m.displaySlow = true
 		return commands.Career()
 	case "clear":
 		m.outputHistory = nil
