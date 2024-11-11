@@ -103,6 +103,9 @@ func (m *model) handleCommand(command string) string {
 	case "career":
 		m.displaySlow = false
 		return renderMarkdown(commands.Career())
+	case "contacts":
+		m.displaySlow = false
+		return renderMarkdown(commands.Contacts())
 	case "clear":
 		m.outputHistory = nil
 		return ""
