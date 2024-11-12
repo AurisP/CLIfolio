@@ -1,18 +1,25 @@
 package commands
 
 const aboutText = `
-Hi, I’m Auris!
+### 👋 Hi, I’m Auris!
 
-I'm a software developer currently based in Tallinn, Estonia.I graduated with honors from TalTech University specializing in Hardware and Software development.
-My primary focus is on embedded Linux systems, where I work extensively with C, Rust, and Java.
+I'm a **software developer** currently based in **Tallinn, Estonia**. I graduated *with honors* from **TalTech University**,  
+specializing in Hardware and Software Development. My main focus is on **embedded Linux systems**, working extensively with  
+C, Rust, and Java to build reliable and efficient solutions.
 
-Both at and outside of work I'm constantly exploring new technologies. 
-For example, this terminal application was built with Go and Wish, technologies I had no previous experience with and wanted to learn out of curiosity.
+🧑‍💻 **Passionate About Learning**  
+Both at work and in my personal time, I'm always exploring new technologies. In fact, this terminal application was built using  
+**Go** and **Wish**—two technologies I dove into just for the fun of learning something new!
 
-Outside of software development, I’m passionate about ultra sports like full distance triathlons and ultra marathons. 
-I like to push myself both physically and mentally and sport gives me another way to do it.
+🏃‍♂️ **Driven by Ultra Sports**  
+When I'm not coding, you can find me pushing my limits through full-distance triathlons and ultra-marathons. These endurance  
+sports challenge me physically and mentally, offering a whole new way to explore self-discipline and resilience.
 
-I love to do long distance hikes in very rural places to feel close to nature and experience something different from everyday life.
+🌲 **Nature Enthusiast**  
+I love long-distance hikes in remote, untouched areas. Getting off the grid and reconnecting with nature helps me recharge,  
+giving me fresh perspectives that inspire both my life and work.
+
+Feel free to reach out—I'm always open to connecting and discussing all things tech, endurance sports, and the outdoors!
 `
 
 func About() string {

@@ -4,7 +4,6 @@ import (
 	"cli/commands"
 	"log"
 	"strings"
-	"time"
 
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
@@ -15,12 +14,7 @@ type model struct {
 	input                 textinput.Model
 	outputHistory         []string
 	displayedHistoryCount int
-	revealPosition        int // Tracks how many characters of the current line are revealed
-	typingDelay           time.Duration
-	displaySlow           bool
 }
-
-type revealMsg struct{}
 
 var username string = "Auris@pc"
 
@@ -35,16 +29,12 @@ func NewModel() *model {
 		input:                 ti,
 		outputHistory:         []string{commands.Welcome()},
 		displayedHistoryCount: 1, // Show the first line
-		revealPosition:        0, // Start reveal from the first character
-		typingDelay:           2 * time.Millisecond,
 	}
 }
 
-func (m model) Init() tea.Cmd {
-	// Start the reveal animation immediately on application load
-	return tea.Tick(m.typingDelay, func(t time.Time) tea.Msg {
-		return revealMsg{}
-	})
+func (m *model) Init() tea.Cmd {
+	// No typing animation needed, so we can return nil
+	return nil
 }
 
 func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -59,34 +49,16 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.outputHistory = append(m.outputHistory, response)
 				m.input.SetValue("")
 
-				// Reset for new output animation
+				// Ensure the output is correctly displayed without duplication
 				m.displayedHistoryCount = len(m.outputHistory)
-				m.revealPosition = 0
-
-				if m.displaySlow {
-					return m, tea.Tick(m.typingDelay, func(t time.Time) tea.Msg {
-						return revealMsg{}
-					})
-				} else {
-					m.revealPosition = len(m.outputHistory[m.displayedHistoryCount-1])
-				}
-
 			}
 
 		case "ctrl+c", "q":
 			return m, tea.Quit
 		}
-
-	case revealMsg:
-		// Increment reveal position and continue until line is fully displayed
-		if m.revealPosition < len(m.outputHistory[m.displayedHistoryCount-1]) {
-			m.revealPosition++
-			return m, tea.Tick(m.typingDelay, func(t time.Time) tea.Msg {
-				return revealMsg{}
-			})
-		}
 	}
 
+	// Update the input field
 	var cmd tea.Cmd
 	m.input, cmd = m.input.Update(msg)
 	return m, cmd
@@ -95,16 +67,14 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m *model) handleCommand(command string) string {
 	switch command {
 	case "help":
-		m.displaySlow = false
 		return renderMarkdown(commands.Help())
 	case "about":
-		m.displaySlow = false
 		return renderMarkdown(commands.About())
 	case "career":
-		m.displaySlow = false
 		return renderMarkdown(commands.Career())
+	case "projects":
+		return renderMarkdown(commands.Projects())
 	case "contacts":
-		m.displaySlow = false
 		return renderMarkdown(commands.Contacts())
 	case "clear":
 		m.outputHistory = nil
@@ -143,13 +113,8 @@ func (m model) View() string {
 			break
 		}
 
-		if i == visibleCount-1 && m.revealPosition < len(entry) {
-			// Render the partially revealed entry with a style
-			renderedHistory = append(renderedHistory, textStyle.Render(entry[:m.revealPosition]))
-		} else {
-			// Use the helper function to render the entry
-			renderedHistory = append(renderedHistory, renderEntry(entry))
-		}
+		// Render the entry as normal without reveal animation
+		renderedHistory = append(renderedHistory, renderEntry(entry))
 	}
 
 	// Join the rendered history and create the input view

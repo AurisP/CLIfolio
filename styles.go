@@ -10,7 +10,7 @@ var (
 	helpStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("#626269")).Render
 
 	// Input field styles
-	userStyle   = lipgloss.NewStyle().Foreground(lipgloss.Color("#ffbb00")) // Blue
+	userStyle   = lipgloss.NewStyle().Foreground(lipgloss.Color("#05c5fa")) // Blue
 	textStyle   = lipgloss.NewStyle().Foreground(lipgloss.Color("#c9c7c7"))
 	borderStyle = lipgloss.NewStyle()
 )
