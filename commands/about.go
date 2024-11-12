@@ -9,13 +9,13 @@ C, Rust, and Java to build reliable and efficient solutions.
 
 🧑‍💻 **Passionate About Learning**  
 Both at work and in my personal time, I'm always exploring new technologies. In fact, this terminal application was built using  
-**Go** and **Wish**—two technologies I dove into just for the fun of learning something new!
+**Go** and **Charm** libraries — two technologies I dove into just for the fun of learning something new!
 
-🏃‍♂️ **Driven by Ultra Sports**  
+🏃‍♂️ **Sports**  
 When I'm not coding, you can find me pushing my limits through full-distance triathlons and ultra-marathons. These endurance  
 sports challenge me physically and mentally, offering a whole new way to explore self-discipline and resilience.
 
-🌲 **Nature Enthusiast**  
+🌲 **Hiking**  
 I love long-distance hikes in remote, untouched areas. Getting off the grid and reconnecting with nature helps me recharge,  
 giving me fresh perspectives that inspire both my life and work.
 
